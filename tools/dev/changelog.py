@@ -3,10 +3,15 @@
 # SPDX-License-Identifier: Apache-2.0
 import pygit2
 import click
+import docker
+import json
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzoffset, tzutc
 from dateutil.parser import parse as parse_date
+
+from c7n.resources import load_available
+from c7n.schema import resource_outline
 
 
 def commit_date(commit):
@@ -51,6 +56,64 @@ def resolve_dateref(since, repo):
     return since
 
 
+def schema_outline_from_docker(tag):
+    client = docker.from_env()
+    result = client.containers.run(
+        f"cloudcustodian/c7n:{tag}",
+        "schema --outline --json"
+    )
+    return json.loads(result)
+
+
+def schema_diff(schema_old, schema_new):
+    out = []
+    for provider in schema_new:
+        resources_old = schema_old.get(provider, [])
+        resources_new = schema_new[provider]
+        for resource in sorted(set(list(resources_old) + list(resources_new))):
+            if resource not in resources_old:
+                out.append(f"- `{resource}` added")
+            elif resource not in resources_new:
+                out.append(f"- `{resource}` removed")
+            else:
+                actions_added = [
+                    action for action in resources_new[resource]['actions']
+                    if action not in resources_old[resource]['actions']
+                ]
+                actions_removed = [
+                    action for action in resources_old[resource]['actions']
+                    if action not in resources_new[resource]['actions']
+                ]
+                filters_added = [
+                    action for action in resources_new[resource]['filters']
+                    if action not in resources_old[resource]['filters']
+                ]
+                filters_removed = [
+                    action for action in resources_old[resource]['filters']
+                    if action not in resources_new[resource]['filters']
+                ]
+
+                if any([
+                    actions_added, actions_removed,
+                    filters_added, filters_removed,
+                ]):
+                    out.append(f"- `{resource}`")
+                if actions_added:
+                    li = ", ".join([f"`{a}`" for a in actions_added])
+                    out.append(f"  - actions added: {li}")
+                if actions_removed:
+                    li = ", ".join([f"`{a}`" for a in actions_removed])
+                    out.append(f"  - actions removed: {li}")
+                if filters_added:
+                    li = ", ".join([f"`{a}`" for a in filters_added])
+                    out.append(f"  - filters added: {li}")
+                if filters_removed:
+                    li = ", ".join([f"`{a}`" for a in filters_removed])
+                    out.append(f"  - filters removed: {li}")
+
+    return "\n".join(out) + "\n"
+
+
 @click.command()
 @click.option('--path', required=True)
 @click.option('--output', required=True)
@@ -60,18 +123,18 @@ def resolve_dateref(since, repo):
 def main(path, output, since, end, user):
     repo = pygit2.Repository(path)
     if since:
-        since = resolve_dateref(since, repo)
+        since_dateref = resolve_dateref(since, repo)
     if end:
-        end = resolve_dateref(end, repo)
+        end_dateref = resolve_dateref(end, repo)
 
     groups = {}
     count = 0
     for commit in repo.walk(
             repo.head.target):
         cdate = commit_date(commit)
-        if since and cdate <= since:
+        if since and cdate <= since_dateref:
             break
-        if end and cdate >= end:
+        if end and cdate >= end_dateref:
             continue
         if user and commit.author.name not in user:
             continue
@@ -110,6 +173,13 @@ def main(path, output, since, end, user):
     print('total commits %d' % count)
     pprint.pprint(dict([(k, len(groups[k])) for k in groups]))
 
+    diff_md = ""
+    if since and not end:
+        schema_old = schema_outline_from_docker(since)
+        load_available()
+        schema_new = resource_outline()
+        diff_md = schema_diff(schema_old, schema_new)
+
     with open(output, 'w') as fh:
         for k in sorted(groups):
             if k in skip:
@@ -118,6 +188,9 @@ def main(path, output, since, end, user):
             for c in sorted(groups[k]):
                 print(" - %s" % c.strip(), file=fh)
             print("\n", file=fh)
+        if diff_md.strip():
+            print("# schema diff", file=fh)
+            print(diff_md, file=fh)
 
 
 if __name__ == '__main__':

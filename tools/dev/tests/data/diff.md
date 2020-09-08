@@ -1,0 +1,7 @@
+- `provider1.resource1`
+  - actions added: `action2`
+  - actions removed: `action1`
+  - filters added: `filter3`, `filter4`
+  - filters removed: `filter2`
+- `provider1.resource2` removed
+- `provider1.resource3` added
