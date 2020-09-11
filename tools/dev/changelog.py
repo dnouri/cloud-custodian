@@ -6,9 +6,13 @@ import click
 import docker
 import json
 
+from collections import defaultdict
 from datetime import datetime, timedelta
 from dateutil.tz import tzoffset, tzutc
 from dateutil.parser import parse as parse_date
+from functools import reduce
+import operator
+
 
 from c7n.resources import load_available
 from c7n.schema import resource_outline
@@ -66,7 +70,11 @@ def schema_outline_from_docker(tag):
 
 
 def schema_diff(schema_old, schema_new):
+    def listify(items):
+        return ", ".join([f"`{it}`" for it in items])
+
     out = []
+    resources_map = defaultdict(dict)
     for provider in schema_new:
         resources_old = schema_old.get(provider, [])
         resources_new = schema_new[provider]
@@ -76,40 +84,48 @@ def schema_diff(schema_old, schema_new):
             elif resource not in resources_new:
                 out.append(f"- `{resource}` removed")
             else:
-                actions_added = [
-                    action for action in resources_new[resource]['actions']
-                    if action not in resources_old[resource]['actions']
-                ]
-                actions_removed = [
-                    action for action in resources_old[resource]['actions']
-                    if action not in resources_new[resource]['actions']
-                ]
-                filters_added = [
-                    action for action in resources_new[resource]['filters']
-                    if action not in resources_old[resource]['filters']
-                ]
-                filters_removed = [
-                    action for action in resources_old[resource]['filters']
-                    if action not in resources_new[resource]['filters']
-                ]
+                for category in ('actions', 'filters'):
+                    resources_map[resource][f"{category}_added"] = [
+                        item for item in resources_new[resource][category]
+                        if item not in resources_old[resource][category]
+                    ]
+                    resources_map[resource][f"{category}_removed"] = [
+                        item for item in resources_old[resource][category]
+                        if item not in resources_new[resource][category]
+                    ]
 
-                if any([
-                    actions_added, actions_removed,
-                    filters_added, filters_removed,
-                ]):
-                    out.append(f"- `{resource}`")
-                if actions_added:
-                    li = ", ".join([f"`{a}`" for a in actions_added])
-                    out.append(f"  - actions added: {li}")
-                if actions_removed:
-                    li = ", ".join([f"`{a}`" for a in actions_removed])
-                    out.append(f"  - actions removed: {li}")
-                if filters_added:
-                    li = ", ".join([f"`{a}`" for a in filters_added])
-                    out.append(f"  - filters added: {li}")
-                if filters_removed:
-                    li = ", ".join([f"`{a}`" for a in filters_removed])
-                    out.append(f"  - filters removed: {li}")
+    # Account for globally added or removed actions and filters; we
+    # don't want these to be repeated over and over for each resource:
+    global_map = {}
+    for category in ('actions', 'filters'):
+        added = global_map[f"{category}_added"] = reduce(operator.and_, [
+            set(rsrc[f"{category}_added"]) for rsrc in resources_map.values()])
+        removed = global_map[f"{category}_removed"] = reduce(operator.and_, [
+            set(rsrc[f"{category}_removed"]) for rsrc in resources_map.values()])
+        if added:
+            out.append(f"- added global {category}: {listify(added)}")
+        if removed:
+            out.append(f"- removed global {category}: {listify(removed)}")
+        for resource, attrs in resources_map.items():
+            attrs[f'{category}_added'] = [
+                item for item in attrs[f'{category}_added']
+                if item not in added
+            ]
+            attrs[f'{category}_removed'] = [
+                item for item in attrs[f'{category}_removed']
+                if item not in removed
+            ]
+
+    for resource, attrs in resources_map.items():
+        if any(change for change in attrs.values()):
+            out.append(f"- `{resource}`")
+            for category in ('actions', 'filters'):
+                added = attrs[f'{category}_added']
+                removed = attrs[f'{category}_removed']
+                if added:
+                    out.append(f"  - added {category}: {listify(added)}")
+                if removed:
+                    out.append(f"  - removed {category}: {listify(removed)}")
 
     return "\n".join(out) + "\n"
 
