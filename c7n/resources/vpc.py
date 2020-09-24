@@ -765,7 +765,7 @@ class SGUsage(Filter):
     def get_codebuild_sgs(self):
         sg_ids = set()
         for cb in self.manager.get_resource_manager('codebuild').resources():
-            sg_ids |= set(cb['vpcConfig'].get('securityGroupIds', []))
+            sg_ids |= set(cb.get('vpcConfig', {}).get('securityGroupIds', []))
         return sg_ids
 
     def get_sg_refs(self):
