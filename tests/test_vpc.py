@@ -8,6 +8,18 @@ from unittest.mock import MagicMock
 from botocore.exceptions import ClientError as BotoClientError
 from c7n.exceptions import PolicyValidationError
 from c7n.resources.aws import shape_validate
+from pytest_terraform import terraform
+
+
+@terraform('sg')
+def test_codebuild_unused(test, sg):
+    factory = test.replay_flight_data("test_security_group_codebuild_unused")
+    p = test.load_policy(
+        {"name": "sg-unused", "resource": "security-group", "filters": ["unused"]},
+        session_factory=factory,
+    )
+    resources = p.run()
+    assert [resource['GroupName'] for resource in resources] == ['example2']
 
 
 class VpcTest(BaseTest):

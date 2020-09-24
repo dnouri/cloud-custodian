@@ -1,0 +1,149 @@
+{
+    "status_code": 200,
+    "data": {
+        "NetworkInterfaces": [
+            {
+                "Association": {
+                    "AllocationId": "eipalloc-05e2356c2d86a7645",
+                    "AssociationId": "eipassoc-05f914f105252a176",
+                    "IpOwnerId": "644160558196",
+                    "PublicDnsName": "ec2-54-166-142-250.compute-1.amazonaws.com",
+                    "PublicIp": "54.166.142.250"
+                },
+                "Attachment": {
+                    "AttachmentId": "ela-attach-b166bf81",
+                    "DeleteOnTermination": false,
+                    "DeviceIndex": 1,
+                    "InstanceOwnerId": "amazon-aws",
+                    "Status": "attached"
+                },
+                "AvailabilityZone": "us-east-1c",
+                "Description": "Interface for NAT Gateway nat-0b2dffaaafa376f82",
+                "Groups": [],
+                "InterfaceType": "nat_gateway",
+                "Ipv6Addresses": [],
+                "MacAddress": "0a:92:57:fa:f9:61",
+                "NetworkInterfaceId": "eni-06cd52bc2844ace68",
+                "OwnerId": "644160558196",
+                "PrivateDnsName": "ip-172-31-13-143.ec2.internal",
+                "PrivateIpAddress": "172.31.13.143",
+                "PrivateIpAddresses": [
+                    {
+                        "Association": {
+                            "AllocationId": "eipalloc-05e2356c2d86a7645",
+                            "AssociationId": "eipassoc-05f914f105252a176",
+                            "IpOwnerId": "644160558196",
+                            "PublicDnsName": "ec2-54-166-142-250.compute-1.amazonaws.com",
+                            "PublicIp": "54.166.142.250"
+                        },
+                        "Primary": true,
+                        "PrivateDnsName": "ip-172-31-13-143.ec2.internal",
+                        "PrivateIpAddress": "172.31.13.143"
+                    }
+                ],
+                "RequesterId": "644160558196",
+                "RequesterManaged": true,
+                "SourceDestCheck": false,
+                "Status": "in-use",
+                "SubnetId": "subnet-027698c8855a89e41",
+                "TagSet": [],
+                "VpcId": "vpc-0a238ebd387b44e4e"
+            },
+            {
+                "Association": {
+                    "AllocationId": "eipalloc-02a3b24fc52829fa4",
+                    "AssociationId": "eipassoc-00e918c49fec1be13",
+                    "IpOwnerId": "644160558196",
+                    "PublicDnsName": "ec2-54-197-131-14.compute-1.amazonaws.com",
+                    "PublicIp": "54.197.131.14"
+                },
+                "Attachment": {
+                    "AttachmentId": "ela-attach-85581188",
+                    "DeleteOnTermination": false,
+                    "DeviceIndex": 1,
+                    "InstanceOwnerId": "amazon-aws",
+                    "Status": "attached"
+                },
+                "AvailabilityZone": "us-east-1b",
+                "Description": "Interface for NAT Gateway nat-0c15a0c1c6601f957",
+                "Groups": [],
+                "InterfaceType": "nat_gateway",
+                "Ipv6Addresses": [],
+                "MacAddress": "12:72:50:2f:43:6b",
+                "NetworkInterfaceId": "eni-08d450f8a772224ca",
+                "OwnerId": "644160558196",
+                "PrivateDnsName": "ip-172-31-126-179.ec2.internal",
+                "PrivateIpAddress": "172.31.126.179",
+                "PrivateIpAddresses": [
+                    {
+                        "Association": {
+                            "AllocationId": "eipalloc-02a3b24fc52829fa4",
+                            "AssociationId": "eipassoc-00e918c49fec1be13",
+                            "IpOwnerId": "644160558196",
+                            "PublicDnsName": "ec2-54-197-131-14.compute-1.amazonaws.com",
+                            "PublicIp": "54.197.131.14"
+                        },
+                        "Primary": true,
+                        "PrivateDnsName": "ip-172-31-126-179.ec2.internal",
+                        "PrivateIpAddress": "172.31.126.179"
+                    }
+                ],
+                "RequesterId": "644160558196",
+                "RequesterManaged": true,
+                "SourceDestCheck": false,
+                "Status": "in-use",
+                "SubnetId": "subnet-02a5d95b0c653427c",
+                "TagSet": [],
+                "VpcId": "vpc-0a238ebd387b44e4e"
+            },
+            {
+                "Association": {
+                    "AllocationId": "eipalloc-07bd9b426b9125af5",
+                    "AssociationId": "eipassoc-0a6330b294a820f85",
+                    "IpOwnerId": "644160558196",
+                    "PublicDnsName": "ec2-52-87-10-232.compute-1.amazonaws.com",
+                    "PublicIp": "52.87.10.232"
+                },
+                "Attachment": {
+                    "AttachmentId": "ela-attach-cba783e9",
+                    "DeleteOnTermination": false,
+                    "DeviceIndex": 1,
+                    "InstanceOwnerId": "amazon-aws",
+                    "Status": "attached"
+                },
+                "AvailabilityZone": "us-east-1a",
+                "Description": "Interface for NAT Gateway nat-05c358b21c73d718a",
+                "Groups": [],
+                "InterfaceType": "nat_gateway",
+                "Ipv6Addresses": [],
+                "MacAddress": "02:a8:48:3a:cd:97",
+                "NetworkInterfaceId": "eni-09129a32dc38862cc",
+                "OwnerId": "644160558196",
+                "PrivateDnsName": "ip-172-31-96-37.ec2.internal",
+                "PrivateIpAddress": "172.31.96.37",
+                "PrivateIpAddresses": [
+                    {
+                        "Association": {
+                            "AllocationId": "eipalloc-07bd9b426b9125af5",
+                            "AssociationId": "eipassoc-0a6330b294a820f85",
+                            "IpOwnerId": "644160558196",
+                            "PublicDnsName": "ec2-52-87-10-232.compute-1.amazonaws.com",
+                            "PublicIp": "52.87.10.232"
+                        },
+                        "Primary": true,
+                        "PrivateDnsName": "ip-172-31-96-37.ec2.internal",
+                        "PrivateIpAddress": "172.31.96.37"
+                    }
+                ],
+                "RequesterId": "644160558196",
+                "RequesterManaged": true,
+                "SourceDestCheck": false,
+                "Status": "in-use",
+                "SubnetId": "subnet-030fb37a680b84c44",
+                "TagSet": [],
+                "VpcId": "vpc-0a238ebd387b44e4e"
+            }
+        ],
+        "ResponseMetadata": {}
+    }
+}

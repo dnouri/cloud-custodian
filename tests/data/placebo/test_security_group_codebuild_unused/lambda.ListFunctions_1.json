@@ -1,0 +1,54 @@
+{
+    "status_code": 200,
+    "data": {
+        "ResponseMetadata": {},
+        "Functions": [
+            {
+                "FunctionName": "aws-controltower-NotificationForwarder",
+                "FunctionArn": "arn:aws:lambda:us-east-1:644160558196:function:aws-controltower-NotificationForwarder",
+                "Runtime": "python3.6",
+                "Role": "arn:aws:iam::644160558196:role/aws-controltower-ForwardSnsNotificationRole",
+                "Handler": "index.lambda_handler",
+                "CodeSize": 473,
+                "Description": "SNS message forwarding function for aggregating account notifications.",
+                "Timeout": 60,
+                "MemorySize": 128,
+                "LastModified": "2020-09-18T16:49:42.963+0000",
+                "CodeSha256": "oYvulOaZT/VllohFXNdzhVOsQoWODQMtASjtVw+vjp8=",
+                "Version": "$LATEST",
+                "Environment": {
+                    "Variables": {
+                        "sns_arn": "arn:aws:sns:us-east-1:644160558196:aws-controltower-AggregateSecurityNotifications"
+                    }
+                },
+                "TracingConfig": {
+                    "Mode": "PassThrough"
+                },
+                "RevisionId": "11444393-08f0-45a8-9cd4-4b95eedca12b"
+            },
+            {
+                "FunctionName": "custodian-health-event-notify",
+                "FunctionArn": "arn:aws:lambda:us-east-1:644160558196:function:custodian-health-event-notify",
+                "Runtime": "python3.8",
+                "Role": "arn:aws:iam::644160558196:role/CloudCustodian-QuickStart",
+                "Handler": "custodian_policy.run",
+                "CodeSize": 455560,
+                "Description": "Health event notifications to SQS.\n",
+                "Timeout": 900,
+                "MemorySize": 512,
+                "LastModified": "2020-09-21T10:54:15.124+0000",
+                "CodeSha256": "jIQelaltR4UELXTpy9nA3sygQM8EHNqn6hb57yBjszw=",
+                "Version": "$LATEST",
+                "VpcConfig": {
+                    "SubnetIds": [],
+                    "SecurityGroupIds": [],
+                    "VpcId": ""
+                },
+                "TracingConfig": {
+                    "Mode": "PassThrough"
+                },
+                "RevisionId": "0ff63334-054b-44f1-8394-76fc586d1a08"
+            }
+        ]
+    }
+}
