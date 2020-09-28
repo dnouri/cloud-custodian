@@ -100,12 +100,12 @@
                 "vpc_config": [
                     {
                         "security_group_ids": [
-                            "sg-0ba8947583197f421"
+                            "sg-0f31edd750f0b3f9f"
                         ],
                         "subnets": [
-                            "subnet-02200da0895f97c08"
+                            "subnet-05fe17b6b2587502e"
                         ],
-                        "vpc_id": "vpc-00fed1d2e5557678b"
+                        "vpc_id": "vpc-0e2ce3db654f9651a"
                     }
                 ]
             }
@@ -114,7 +114,7 @@
             "example": {
                 "arn": "arn:aws:iam::644160558196:role/example",
                 "assume_role_policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"codebuild.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}",
-                "create_date": "2020-09-24T20:12:22Z",
+                "create_date": "2020-09-28T13:12:33Z",
                 "description": "",
                 "force_detach_policies": false,
                 "id": "example",
@@ -124,7 +124,7 @@
                 "path": "/",
                 "permissions_boundary": null,
                 "tags": null,
-                "unique_id": "AROA37RXYDBAV4ON76DCA"
+                "unique_id": "AROA37RXYDBAX5PVMOXU2"
             }
         },
         "aws_iam_role_policy": {
@@ -132,13 +132,13 @@
                 "id": "example:terraform-644160558196",
                 "name": "terraform-644160558196",
                 "name_prefix": null,
-                "policy": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Resource\": [\n        \"*\"\n      ],\n      \"Action\": [\n        \"logs:CreateLogGroup\",\n        \"logs:CreateLogStream\",\n        \"logs:PutLogEvents\"\n      ]\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateNetworkInterface\",\n        \"ec2:DescribeDhcpOptions\",\n        \"ec2:DescribeNetworkInterfaces\",\n        \"ec2:DeleteNetworkInterface\",\n        \"ec2:DescribeSubnets\",\n        \"ec2:DescribeSecurityGroups\",\n        \"ec2:DescribeVpcs\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateNetworkInterfacePermission\"\n      ],\n      \"Resource\": [\n        \"arn:aws:ec2:us-east-1:644160558196:network-interface/*\"\n      ],\n      \"Condition\": {\n        \"StringEquals\": {\n          \"ec2:Subnet\": [\n            \"arn:aws:ec2:us-east-1:644160558196:subnet/subnet-02200da0895f97c08\"\n          ],\n          \"ec2:AuthorizedService\": \"codebuild.amazonaws.com\"\n        }\n      }\n    }\n  ]\n}\n",
+                "policy": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Resource\": [\n        \"*\"\n      ],\n      \"Action\": [\n        \"logs:CreateLogGroup\",\n        \"logs:CreateLogStream\",\n        \"logs:PutLogEvents\"\n      ]\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateNetworkInterface\",\n        \"ec2:DescribeDhcpOptions\",\n        \"ec2:DescribeNetworkInterfaces\",\n        \"ec2:DeleteNetworkInterface\",\n        \"ec2:DescribeSubnets\",\n        \"ec2:DescribeSecurityGroups\",\n        \"ec2:DescribeVpcs\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateNetworkInterfacePermission\"\n      ],\n      \"Resource\": [\n        \"arn:aws:ec2:us-east-1:644160558196:network-interface/*\"\n      ],\n      \"Condition\": {\n        \"StringEquals\": {\n          \"ec2:Subnet\": [\n            \"arn:aws:ec2:us-east-1:644160558196:subnet/subnet-05fe17b6b2587502e\"\n          ],\n          \"ec2:AuthorizedService\": \"codebuild.amazonaws.com\"\n        }\n      }\n    }\n  ]\n}\n",
                 "role": "example"
             }
         },
         "aws_security_group": {
             "example1": {
-                "arn": "arn:aws:ec2:us-east-1:644160558196:security-group/sg-0ba8947583197f421",
+                "arn": "arn:aws:ec2:us-east-1:644160558196:security-group/sg-0f31edd750f0b3f9f",
                 "description": "In use",
                 "egress": [
                     {
@@ -155,7 +155,7 @@
                         "to_port": 0
                     }
                 ],
-                "id": "sg-0ba8947583197f421",
+                "id": "sg-0f31edd750f0b3f9f",
                 "ingress": [
                     {
                         "cidr_blocks": [
@@ -177,10 +177,10 @@
                 "revoke_rules_on_delete": false,
                 "tags": null,
                 "timeouts": null,
-                "vpc_id": "vpc-00fed1d2e5557678b"
+                "vpc_id": "vpc-0e2ce3db654f9651a"
             },
             "example2": {
-                "arn": "arn:aws:ec2:us-east-1:644160558196:security-group/sg-03d3c90d77ca24a5e",
+                "arn": "arn:aws:ec2:us-east-1:644160558196:security-group/sg-0ed6c6d872d445a0d",
                 "description": "Unused",
                 "egress": [
                     {
@@ -197,7 +197,7 @@
                         "to_port": 0
                     }
                 ],
-                "id": "sg-03d3c90d77ca24a5e",
+                "id": "sg-0ed6c6d872d445a0d",
                 "ingress": [
                     {
                         "cidr_blocks": [
@@ -219,17 +219,17 @@
                 "revoke_rules_on_delete": false,
                 "tags": null,
                 "timeouts": null,
-                "vpc_id": "vpc-00fed1d2e5557678b"
+                "vpc_id": "vpc-0e2ce3db654f9651a"
             }
         },
         "aws_subnet": {
             "example": {
-                "arn": "arn:aws:ec2:us-east-1:644160558196:subnet/subnet-02200da0895f97c08",
+                "arn": "arn:aws:ec2:us-east-1:644160558196:subnet/subnet-05fe17b6b2587502e",
                 "assign_ipv6_address_on_creation": false,
                 "availability_zone": "us-east-1b",
                 "availability_zone_id": "use1-az2",
                 "cidr_block": "10.0.1.0/24",
-                "id": "subnet-02200da0895f97c08",
+                "id": "subnet-05fe17b6b2587502e",
                 "ipv6_cidr_block": "",
                 "ipv6_cidr_block_association_id": "",
                 "map_public_ip_on_launch": false,
@@ -237,27 +237,27 @@
                 "owner_id": "644160558196",
                 "tags": null,
                 "timeouts": null,
-                "vpc_id": "vpc-00fed1d2e5557678b"
+                "vpc_id": "vpc-0e2ce3db654f9651a"
             }
         },
         "aws_vpc": {
             "example": {
-                "arn": "arn:aws:ec2:us-east-1:644160558196:vpc/vpc-00fed1d2e5557678b",
+                "arn": "arn:aws:ec2:us-east-1:644160558196:vpc/vpc-0e2ce3db654f9651a",
                 "assign_generated_ipv6_cidr_block": false,
                 "cidr_block": "10.0.0.0/16",
-                "default_network_acl_id": "acl-08d0cf12fb267e70b",
-                "default_route_table_id": "rtb-09760b27391ba5450",
-                "default_security_group_id": "sg-05dc00c12385b38cc",
+                "default_network_acl_id": "acl-08c7e175c3362b2e4",
+                "default_route_table_id": "rtb-05693b29a75468fff",
+                "default_security_group_id": "sg-053f54b1170d9c80e",
                 "dhcp_options_id": "dopt-f8bedb82",
                 "enable_classiclink": false,
                 "enable_classiclink_dns_support": false,
                 "enable_dns_hostnames": false,
                 "enable_dns_support": true,
-                "id": "vpc-00fed1d2e5557678b",
+                "id": "vpc-0e2ce3db654f9651a",
                 "instance_tenancy": "default",
                 "ipv6_association_id": "",
                 "ipv6_cidr_block": "",
-                "main_route_table_id": "rtb-09760b27391ba5450",
+                "main_route_table_id": "rtb-05693b29a75468fff",
                 "owner_id": "644160558196",
                 "tags": null
             }

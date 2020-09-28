@@ -11,15 +11,22 @@ from c7n.resources.aws import shape_validate
 from pytest_terraform import terraform
 
 
-@terraform('sg')
-def test_codebuild_unused(test, sg):
+@terraform('aws_code_build_vpc')
+def test_codebuild_unused(test, aws_code_build_vpc):
     factory = test.replay_flight_data("test_security_group_codebuild_unused")
     p = test.load_policy(
         {"name": "sg-unused", "resource": "security-group", "filters": ["unused"]},
         session_factory=factory,
     )
+    unused = p.resource_manager.filters[0]
+    test.patch(
+        unused,
+        'get_scanners',
+        lambda: (('codebuild', unused.get_codebuild_sgs),))
     resources = p.run()
-    assert [resource['GroupName'] for resource in resources] == ['example2']
+    sg_names = [resource['GroupName'] for resource in resources]
+    assert 'example2' in sg_names
+    assert 'example1' not in sg_names
 
 
 class VpcTest(BaseTest):
