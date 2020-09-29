@@ -64,7 +64,7 @@ resource "aws_iam_role_policy" "example" {
       "Condition": {
         "StringEquals": {
           "ec2:Subnet": [
-            "${aws_subnet.example.arn}"
+            "${data.aws_subnet.example.arn}"
           ],
           "ec2:AuthorizedService": "codebuild.amazonaws.com"
         }
@@ -133,14 +133,14 @@ resource "aws_codebuild_project" "example" {
   source_version = "master"
 
   vpc_config {
-    vpc_id = aws_vpc.example.id
+    vpc_id = data.aws_vpc.example.id
 
     subnets = [
-      aws_subnet.example.id,
+      data.aws_subnet.example.id,
     ]
 
     security_group_ids = [
-      aws_security_group.example1.id,
+      data.aws_security_group.example1.id,
     ]
   }
 

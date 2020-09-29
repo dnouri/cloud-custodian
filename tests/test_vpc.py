@@ -11,9 +11,10 @@ from c7n.resources.aws import shape_validate
 from pytest_terraform import terraform
 
 
-@terraform('aws_code_build_vpc')
-def test_codebuild_unused(test, aws_code_build_vpc):
-    factory = test.replay_flight_data("test_security_group_codebuild_unused")
+@terraform('aws_code_build_vpc', replay=False)
+@terraform('aws_network', scope='session', replay=False)
+def test_codebuild_unused(test, aws_network, aws_code_build_vpc):
+    factory = test.record_flight_data("test_security_group_codebuild_unused")
     p = test.load_policy(
         {"name": "sg-unused", "resource": "security-group", "filters": ["unused"]},
         session_factory=factory,

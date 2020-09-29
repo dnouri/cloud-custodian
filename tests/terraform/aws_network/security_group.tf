@@ -17,6 +17,10 @@ resource "aws_security_group" "example1" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Name = "example"
+  }
 }
 
 resource "aws_security_group" "example2" {
