@@ -3,6 +3,10 @@
 #   acl    = "private"
 # }
 
+module "aws_network" {
+  source = "../aws_network"
+}
+
 resource "aws_iam_role" "example" {
   name = "example"
 
@@ -64,7 +68,7 @@ resource "aws_iam_role_policy" "example" {
       "Condition": {
         "StringEquals": {
           "ec2:Subnet": [
-            "${aws_subnet.example.arn}"
+            "${module.aws_network.aws_subnet_example_arn}"
           ],
           "ec2:AuthorizedService": "codebuild.amazonaws.com"
         }
@@ -133,14 +137,14 @@ resource "aws_codebuild_project" "example" {
   source_version = "master"
 
   vpc_config {
-    vpc_id = aws_vpc.example.id
+    vpc_id = module.aws_network.aws_vpc_example_id
 
     subnets = [
-      aws_subnet.example.id,
+      module.aws_network.aws_subnet_example_id,
     ]
 
     security_group_ids = [
-      aws_security_group.example1.id,
+      module.aws_network.aws_security_group_example1_id,
     ]
   }
 

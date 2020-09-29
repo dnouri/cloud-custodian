@@ -40,3 +40,6 @@ resource "aws_security_group" "example2" {
   }
 }
 
+output "aws_security_group_example1_id" {
+  value = aws_security_group.example1.id
+}
