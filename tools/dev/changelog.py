@@ -69,9 +69,42 @@ def schema_outline_from_docker(tag):
     return json.loads(result)
 
 
+def link(provider='aws', resource=None, category=None, element=None):
+    if resource and '.' in resource:
+        provider, resource = resource.split('.')
+    if resource and category and element:
+        return (
+            f'[`{element}`]('
+            f'https://cloudcustodian.io/docs/'
+            f'{provider}/resources/{resource}.html'
+            f'#{provider}-{resource}-{category}-{element}'
+            f')'
+        )
+    elif resource and not category:
+        return (
+            f'[`{provider}.{resource}`]('
+            f'https://cloudcustodian.io/docs/'
+            f'{provider}/resources/{resource}.html'
+            f')'
+        )
+    elif not resource and category:
+        return (
+            f'[`{element}`]('
+            f'https://cloudcustodian.io/docs/'
+            f'{provider}/resources/{provider}-common-{category}.html'
+            f'#{provider}-common-{category}-{element}'
+            f')'
+        )
+    else:
+        raise ValueError()
+
+
 def schema_diff(schema_old, schema_new):
-    def listify(items):
-        return ", ".join([f"`{it}`" for it in items])
+    def listify(items, bt=True):
+        if bt:
+            return ", ".join([f'`{i}`' for i in items])
+        else:
+            return ", ".join(items)
 
     out = []
     resources_map = defaultdict(dict)
@@ -80,7 +113,7 @@ def schema_diff(schema_old, schema_new):
         resources_new = schema_new[provider]
         for resource in sorted(set(list(resources_old) + list(resources_new))):
             if resource not in resources_old:
-                out.append(f"- `{resource}` added")
+                out.append(f"- {link(provider=provider, resource=resource)} added")
             elif resource not in resources_new:
                 out.append(f"- `{resource}` removed")
             else:
@@ -103,9 +136,13 @@ def schema_diff(schema_old, schema_new):
         removed = global_map[f"{category}_removed"] = reduce(operator.and_, [
             set(rsrc[f"{category}_removed"]) for rsrc in resources_map.values()])
         if added:
-            out.append(f"- added global {category}: {listify(added)}")
+            added_str = listify(
+                [link(category=category, element=el) for el in added],
+                bt=False,
+            )
+            out.append(f"- added common {category}: {added_str}")
         if removed:
-            out.append(f"- removed global {category}: {listify(removed)}")
+            out.append(f"- removed common {category}: {listify(removed)}")
         for resource, attrs in resources_map.items():
             attrs[f'{category}_added'] = [
                 item for item in attrs[f'{category}_added']
@@ -123,7 +160,12 @@ def schema_diff(schema_old, schema_new):
                 added = attrs[f'{category}_added']
                 removed = attrs[f'{category}_removed']
                 if added:
-                    out.append(f"  - added {category}: {listify(added)}")
+                    added = [
+                        link(resource=resource, category=category, element=el)
+                        for el in added
+                    ]
+                    out.append(f"  - added {category}: "
+                               f"{listify(added, bt=False)}")
                 if removed:
                     out.append(f"  - removed {category}: {listify(removed)}")
 
