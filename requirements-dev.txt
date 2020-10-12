@@ -7,7 +7,6 @@
 -r tools/c7n_kube/requirements.txt
 -r tools/c7n_mailer/requirements.txt
 -r tools/c7n_org/requirements.txt
--r tools/dev/requirements.txt
 
 # Setup source directories as editable/development distributions
 -e .

@@ -4,6 +4,8 @@ from pathlib import Path
 import pytest
 
 
+pytest.importorskip('pygit2')
+
 schema_diff = Path(__file__).parent.parent / "changelog.py"
 with open(schema_diff, encoding='utf-8') as f:
     exec(f.read())
