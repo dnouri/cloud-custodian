@@ -1,0 +1,28 @@
+{
+    "status_code": 200,
+    "data": {
+        "Snapshots": [
+            {
+                "Description": "",
+                "Encrypted": false,
+                "OwnerId": "644160558196",
+                "Progress": "100%",
+                "SnapshotId": "snap-023ec311693247f54",
+                "StartTime": {
+                    "__class__": "datetime",
+                    "year": 2020,
+                    "month": 10,
+                    "day": 12,
+                    "hour": 10,
+                    "minute": 56,
+                    "second": 8,
+                    "microsecond": 158000
+                },
+                "State": "completed",
+                "VolumeId": "vol-0f23952fc2edd808b",
+                "VolumeSize": 8
+            }
+        ],
+        "ResponseMetadata": {}
+    }
+}

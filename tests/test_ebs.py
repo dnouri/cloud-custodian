@@ -335,6 +335,64 @@ class SnapshotTrimTest(BaseTest):
         self.assertEqual(len(resources), 1)
 
 
+class SnapshotRemoveCreateVolumePermissions(BaseTest):
+
+    def test_snapshot_remove_permissions_matched(self):
+        factory = self.replay_flight_data(
+            "test_ebs_snapshot_remove_permissions_matched")
+        p = self.load_policy(
+            {
+                "name": "remove-permissions",
+                "resource": "ebs-snapshot",
+                "filters": [
+                    {
+                        "type": "cross-account",
+                        "whitelist": ["112233445566"],
+                    },
+                ],
+                "actions": [
+                    {
+                        "type": "remove-create-volume-permissions",
+                        "accounts": "matched",
+                    },
+                ],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(
+            sorted(resources[0]['c7n:CrossAccountViolations']),
+            ['665544332211'])
+
+        client = factory().client('ec2')
+        perms = client.describe_snapshot_attribute(
+            SnapshotId=resources[0]['SnapshotId'],
+            Attribute='createVolumePermission')['CreateVolumePermissions']
+        assert perms == [{"UserId": "112233445566"}]
+
+    def test_snapshot_remove_permissions_all(self):
+        factory = self.replay_flight_data(
+            "test_ebs_snapshot_remove_permissions")
+        p = self.load_policy(
+            {
+                "name": "remove-permissions",
+                "resource": "ebs-snapshot",
+                "actions": ["remove-create-volume-permissions"],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+
+        self.assertEqual(len(resources), 1)
+        client = factory().client('ec2')
+        perms = client.describe_snapshot_attribute(
+            SnapshotId=resources[0]['SnapshotId'],
+            Attribute='createVolumePermission')['CreateVolumePermissions']
+        assert perms == []
+
+
 class AttachedInstanceTest(BaseTest):
 
     def test_ebs_instance_filter(self):

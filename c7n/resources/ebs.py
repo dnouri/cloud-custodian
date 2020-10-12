@@ -514,6 +514,82 @@ class CopySnapshot(BaseAction):
                 "Cross region copy complete %s", ",".join(copy_ids))
 
 
+@Snapshot.action_registry.register('remove-create-volume-permissions')
+class RemoveCreateVolumePermissions(BaseAction):
+    """Action to remove permissions for creating volumes from a
+    snapshot
+
+    This action will by default remove any create volume permissions
+    granted to other AWS accounts.
+
+    Combining this action with the 'cross-account' filter allows you
+    greater control over which accounts will be removed, e.g. using a
+    whitelist:
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: ebs-dont-share-cross-account
+                resource: ebs-snapshot
+                filters:
+                  - type: cross-account
+                    whitelist:
+                    - '112233445566'
+                actions:
+                  - type: remove-create-volume-permissions
+                    accounts: matched
+    """
+    schema = type_schema(
+        'remove-create-volume-permissions',
+        accounts={'oneOf': [
+            {'enum': ['matched']},
+            {'type': 'string', 'minLength': 12, 'maxLength': 12}]})
+
+    permissions = ('ec2:ModifySnapshotAttribute',)
+
+    def validate(self):
+        if 'accounts' in self.data and self.data['accounts'] == 'matched':
+            found = False
+            for f in self.manager.iter_filters():
+                if isinstance(f, SnapshotCrossAccountAccess):
+                    found = True
+                    break
+            if not found:
+                raise PolicyValidationError(
+                    "policy:%s filter:%s with matched requires cross-account filter" % (
+                        self.manager.ctx.policy.name, self.type))
+
+    def process(self, snapshots):
+        client = local_session(self.manager.session_factory).client('ec2')
+        for i in snapshots:
+            self.process_image(client, i)
+
+    def process_image(self, client, snapshot):
+        accounts = self.data.get('accounts')
+        if not accounts:
+            return client.reset_snapshot_attribute(
+                SnapshotId=snapshot['SnapshotId'], Attribute="createVolumePermission")
+        if accounts == 'matched':
+            accounts = snapshot.get(
+                'c7n:' +
+                SnapshotCrossAccountAccess.annotation_key)  # XXX
+        if not accounts:
+            return
+        remove = []
+        if 'all' in accounts:
+            remove.append({'Group': 'all'})
+            accounts.remove('all')
+        remove.extend([{'UserId': a} for a in accounts])
+        if not remove:
+            return
+        client.modify_snapshot_attribute(
+            SnapshotId=snapshot['SnapshotId'],
+            CreateVolumePermission={'Remove': remove},
+            OperationType='remove')
+
+
 @resources.register('ebs')
 class EBS(QueryResourceManager):
 
