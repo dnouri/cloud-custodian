@@ -514,13 +514,14 @@ class CopySnapshot(BaseAction):
                 "Cross region copy complete %s", ",".join(copy_ids))
 
 
-@Snapshot.action_registry.register('remove-create-volume-permissions')
-class RemoveCreateVolumePermissions(BaseAction):
-    """Action to remove permissions for creating volumes from a
-    snapshot
+@Snapshot.action_registry.register('set-permissions')
+class SetPermissions(BaseAction):
+    """Action to set permissions for creating volumes from a snapshot
 
-    This action will by default remove any create volume permissions
-    granted to other AWS accounts.
+    Use the add_accounts and remove_accounts parameters to control
+    which accounts to add or remove respectively.  The default is to
+    remove any create volume permissions granted to other AWS
+    accounts.
 
     Combining this action with the 'cross-account' filter allows you
     greater control over which accounts will be removed, e.g. using a
@@ -538,19 +539,26 @@ class RemoveCreateVolumePermissions(BaseAction):
                     whitelist:
                     - '112233445566'
                 actions:
-                  - type: remove-create-volume-permissions
-                    accounts: matched
+                  - type: set-permissions
+                    remove_accounts: matched
     """
     schema = type_schema(
-        'remove-create-volume-permissions',
-        accounts={'oneOf': [
-            {'enum': ['matched']},
-            {'type': 'string', 'minLength': 12, 'maxLength': 12}]})
+        'set-permissions',
+        remove_accounts={
+            'oneOf': [
+                {'enum': ['matched']},
+                {'type': 'array', 'items': {
+                    'type': 'string', 'minLength': 12, 'maxLength': 12}},
+            ]},
+        add_accounts={
+            'type': 'array', 'items': {
+                'type': 'string', 'minLength': 12, 'maxLength': 12}},
+    )
 
     permissions = ('ec2:ModifySnapshotAttribute',)
 
     def validate(self):
-        if 'accounts' in self.data and self.data['accounts'] == 'matched':
+        if self.data.get('remove_accounts') == 'matched':
             found = False
             for f in self.manager.iter_filters():
                 if isinstance(f, SnapshotCrossAccountAccess):
@@ -567,27 +575,32 @@ class RemoveCreateVolumePermissions(BaseAction):
             self.process_image(client, i)
 
     def process_image(self, client, snapshot):
-        accounts = self.data.get('accounts')
-        if not accounts:
+        add_accounts = self.data.get('add_accounts', [])
+        remove_accounts = self.data.get('remove_accounts', [])
+        if not add_accounts and not remove_accounts:
             return client.reset_snapshot_attribute(
                 SnapshotId=snapshot['SnapshotId'], Attribute="createVolumePermission")
-        if accounts == 'matched':
-            accounts = snapshot.get(
-                'c7n:' +
-                SnapshotCrossAccountAccess.annotation_key)  # XXX
-        if not accounts:
-            return
+        if remove_accounts == 'matched':
+            remove_accounts = snapshot.get(
+                'c7n:' + SnapshotCrossAccountAccess.annotation_key)
         remove = []
-        if 'all' in accounts:
+        if 'all' in remove_accounts:
             remove.append({'Group': 'all'})
-            accounts.remove('all')
-        remove.extend([{'UserId': a} for a in accounts])
-        if not remove:
-            return
-        client.modify_snapshot_attribute(
-            SnapshotId=snapshot['SnapshotId'],
-            CreateVolumePermission={'Remove': remove},
-            OperationType='remove')
+            remove_accounts.remove('all')
+        remove.extend([{'UserId': a} for a in remove_accounts])
+
+        add = [{'UserId': a} for a in add_accounts]
+
+        if remove:
+            client.modify_snapshot_attribute(
+                SnapshotId=snapshot['SnapshotId'],
+                CreateVolumePermission={'Remove': remove},
+                OperationType='remove')
+        if add:
+            client.modify_snapshot_attribute(
+                SnapshotId=snapshot['SnapshotId'],
+                CreateVolumePermission={'Add': add},
+                OperationType='add')
 
 
 @resources.register('ebs')
