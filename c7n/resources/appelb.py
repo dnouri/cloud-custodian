@@ -501,11 +501,31 @@ class AppELBModifyAttributes(BaseAction):
                 actions:
                   - type: modify-attributes
                     "deletion_protection.enabled": "true"
+                    "idle_timeout.timeout_seconds": 120
     """
-    schema = type_schema(
-        'modify-attributes',
-    )
-    schema['additionalProperties'] = True
+    schema = {
+        'type': 'object',
+        'additionalProperties': False,
+        'properties': {
+            'type': {
+                'enum': ['modify-attributes']},
+            'access_logs.s3.enabled': {
+                'enum': ['true', 'false']},
+            'access_logs.s3.bucket': {'type': 'string'},
+            'access_logs.s3.prefix': {'type': 'string'},
+            'deletion_protection.enabled': {
+                'enum': ['true', 'false']},
+            'idle_timeout.timeout_seconds': {'type': 'number'},
+            'routing.http.desync_mitigation_mode': {
+                'enum': ['monitor', 'defensive', 'strictest']},
+            'routing.http.drop_invalid_header_fields.enabled': {
+                'enum': ['true', 'false']},
+            'routing.http2.enabled': {
+                'enum': ['true', 'false']},
+            'load_balancing.cross_zone.enabled': {
+                'enum': ['true', 'false']},
+        },
+    }
     permissions = ("elasticloadbalancing:ModifyLoadBalancerAttributes",)
 
     def process(self, resources):
