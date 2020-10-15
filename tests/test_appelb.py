@@ -364,6 +364,30 @@ class AppELBTest(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
 
+    def test_appelb_modify_attributes(self):
+        session_factory = self.replay_flight_data("test_appelb_modify_attributes")
+        client = session_factory().client("elbv2")
+        p = self.load_policy(
+            {
+                "name": "appelb-enable-deletion-protection",
+                "resource": "app-elb",
+                "actions": [
+                    {
+                        "type": "modify-attributes",
+                        "deletion_protection.enabled": "true",
+                    }
+                ],
+            },
+            session_factory=session_factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        arn = resources[0]["LoadBalancerArn"]
+        attrs = client.describe_load_balancer_attributes(
+            LoadBalancerArn=arn)["Attributes"]
+        attrs = {obj['Key']: obj['Value'] for obj in attrs}
+        assert attrs['deletion_protection.enabled'] == 'true'
+
     def test_appelb_waf_any(self):
         factory = self.replay_flight_data("test_appelb_waf")
         p = self.load_policy({

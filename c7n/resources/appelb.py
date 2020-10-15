@@ -485,6 +485,44 @@ class AppELBDeleteAction(BaseAction):
                 alb['LoadBalancerArn'], e)
 
 
+@AppELB.action_registry.register('modify-attributes')
+class AppELBModifyAttributes(BaseAction):
+    """Modify attributes given by string keys and values
+
+    Exposes the ModifyLoadBalancerAttributes API
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: turn-on-elb-deletion-protection
+                resource: app-elb
+                actions:
+                  - type: modify-attributes
+                    "deletion_protection.enabled": "true"
+    """
+    schema = type_schema(
+        'modify-attributes',
+    )
+    schema['additionalProperties'] = True
+    permissions = ("elasticloadbalancing:ModifyLoadBalancerAttributes",)
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('elbv2')
+        attrs = self.data.copy()
+        attrs.pop('type')
+        for appelb in resources:
+            client.modify_load_balancer_attributes(
+                LoadBalancerArn=appelb['LoadBalancerArn'],
+                Attributes=[
+                    {'Key': key, 'Value': value}
+                    for (key, value) in attrs.items()
+                ],
+            )
+        return resources
+
+
 class AppELBListenerFilterBase:
     """ Mixin base class for filters that query LB listeners.
     """
