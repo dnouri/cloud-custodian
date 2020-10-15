@@ -41,6 +41,7 @@ aliases = {
     'sechub': 'aws',
     'sns': 'aws',
     'actions': 'aws',
+    'chore': 'core',
     'serverless': 'core',
     'packaging': 'tests',
     '0': 'release',
@@ -247,7 +248,7 @@ def main(path, output, since, end, user):
                 print(" - %s" % c.strip(), file=fh)
             print("\n", file=fh)
         if diff_md.strip():
-            print("# schema diff", file=fh)
+            print("# schema changes", file=fh)
             print(diff_md, file=fh)
 
 
