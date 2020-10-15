@@ -233,7 +233,7 @@ def main(path, output, since, end, user):
     pprint.pprint(dict([(k, len(groups[k])) for k in groups]))
 
     diff_md = ""
-    if since and not end:
+    if since and not end and since.count('.') > 2:
         schema_old = schema_outline_from_docker(since)
         load_available()
         schema_new = resource_outline()
