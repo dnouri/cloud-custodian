@@ -501,8 +501,9 @@ class AppELBModifyAttributes(BaseAction):
                 resource: app-elb
                 actions:
                   - type: modify-attributes
-                    "deletion_protection.enabled": "true"
-                    "idle_timeout.timeout_seconds": 120
+                    properties:
+                      "deletion_protection.enabled": "true"
+                      "idle_timeout.timeout_seconds": 120
     """
     schema = {
         'type': 'object',
@@ -510,29 +511,34 @@ class AppELBModifyAttributes(BaseAction):
         'properties': {
             'type': {
                 'enum': ['modify-attributes']},
-            'access_logs.s3.enabled': {
-                'enum': ['true', 'false']},
-            'access_logs.s3.bucket': {'type': 'string'},
-            'access_logs.s3.prefix': {'type': 'string'},
-            'deletion_protection.enabled': {
-                'enum': ['true', 'false']},
-            'idle_timeout.timeout_seconds': {'type': 'number'},
-            'routing.http.desync_mitigation_mode': {
-                'enum': ['monitor', 'defensive', 'strictest']},
-            'routing.http.drop_invalid_header_fields.enabled': {
-                'enum': ['true', 'false']},
-            'routing.http2.enabled': {
-                'enum': ['true', 'false']},
-            'load_balancing.cross_zone.enabled': {
-                'enum': ['true', 'false']},
+            'properties': {
+                'type': 'object',
+                'items': {
+                    'additionalProperties': False,
+                    'access_logs.s3.enabled': {
+                        'enum': ['true', 'false']},
+                    'access_logs.s3.bucket': {'type': 'string'},
+                    'access_logs.s3.prefix': {'type': 'string'},
+                    'deletion_protection.enabled': {
+                        'enum': ['true', 'false']},
+                    'idle_timeout.timeout_seconds': {'type': 'number'},
+                    'routing.http.desync_mitigation_mode': {
+                        'enum': ['monitor', 'defensive', 'strictest']},
+                    'routing.http.drop_invalid_header_fields.enabled': {
+                        'enum': ['true', 'false']},
+                    'routing.http2.enabled': {
+                        'enum': ['true', 'false']},
+                    'load_balancing.cross_zone.enabled': {
+                        'enum': ['true', 'false']},
+                },
+            },
         },
     }
     permissions = ("elasticloadbalancing:ModifyLoadBalancerAttributes",)
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('elbv2')
-        attrs = self.data.copy()
-        attrs.pop('type')
+        attrs = self.data['properties']
         for appelb in resources:
             client.modify_load_balancer_attributes(
                 LoadBalancerArn=appelb['LoadBalancerArn'],
