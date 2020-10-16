@@ -540,12 +540,14 @@ class AppELBModifyAttributes(BaseAction):
         client = local_session(self.manager.session_factory).client('elbv2')
         attrs = self.data['properties']
         for appelb in resources:
-            client.modify_load_balancer_attributes(
+            self.manager.retry(
+                client.modify_load_balancer_attributes,
                 LoadBalancerArn=appelb['LoadBalancerArn'],
                 Attributes=[
                     {'Key': key, 'Value': value}
                     for (key, value) in attrs.items()
                 ],
+                ignore_err_codes=('LoadBalancerNotFoundException',),
             )
         return resources
 
