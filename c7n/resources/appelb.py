@@ -489,7 +489,8 @@ class AppELBDeleteAction(BaseAction):
 class AppELBModifyAttributes(BaseAction):
     """Modify attributes given by string keys and values
 
-    Exposes the ModifyLoadBalancerAttributes API
+    Exposes the `ModifyLoadBalancerAttributes API
+    <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.modify_load_balancer_attributes>`_
 
     :example:
 
