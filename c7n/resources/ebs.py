@@ -518,10 +518,9 @@ class CopySnapshot(BaseAction):
 class SetPermissions(BaseAction):
     """Action to set permissions for creating volumes from a snapshot
 
-    Use the add_accounts and remove_accounts parameters to control
-    which accounts to add or remove respectively.  The default is to
-    remove any create volume permissions granted to other AWS
-    accounts.
+    Use the 'add' and 'remove' parameters to control which accounts to
+    add or remove respectively.  The default is to remove any create
+    volume permissions granted to other AWS accounts.
 
     Combining this action with the 'cross-account' filter allows you
     greater control over which accounts will be removed, e.g. using a
@@ -540,17 +539,17 @@ class SetPermissions(BaseAction):
                     - '112233445566'
                 actions:
                   - type: set-permissions
-                    remove_accounts: matched
+                    remove: matched
     """
     schema = type_schema(
         'set-permissions',
-        remove_accounts={
+        remove={
             'oneOf': [
                 {'enum': ['matched']},
                 {'type': 'array', 'items': {
                     'type': 'string', 'minLength': 12, 'maxLength': 12}},
             ]},
-        add_accounts={
+        add={
             'type': 'array', 'items': {
                 'type': 'string', 'minLength': 12, 'maxLength': 12}},
     )
@@ -558,7 +557,7 @@ class SetPermissions(BaseAction):
     permissions = ('ec2:ModifySnapshotAttribute',)
 
     def validate(self):
-        if self.data.get('remove_accounts') == 'matched':
+        if self.data.get('remove') == 'matched':
             found = False
             for f in self.manager.iter_filters():
                 if isinstance(f, SnapshotCrossAccountAccess):
@@ -575,8 +574,8 @@ class SetPermissions(BaseAction):
             self.process_image(client, i)
 
     def process_image(self, client, snapshot):
-        add_accounts = self.data.get('add_accounts', [])
-        remove_accounts = self.data.get('remove_accounts', [])
+        add_accounts = self.data.get('add', [])
+        remove_accounts = self.data.get('remove', [])
         if not add_accounts and not remove_accounts:
             return client.reset_snapshot_attribute(
                 SnapshotId=snapshot['SnapshotId'], Attribute="createVolumePermission")
@@ -587,7 +586,8 @@ class SetPermissions(BaseAction):
         if 'all' in remove_accounts:
             remove.append({'Group': 'all'})
             remove_accounts.remove('all')
-        remove.extend([{'UserId': a} for a in remove_accounts])
+        else:
+            remove.extend([{'UserId': a} for a in remove_accounts])
 
         add = [{'UserId': a} for a in add_accounts]
 

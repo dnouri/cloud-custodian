@@ -373,8 +373,8 @@ class SnapshotSetPermissions(BaseTest):
                 "actions": [
                     {
                         "type": "set-permissions",
-                        "add_accounts": ["112233445566"],
-                        "remove_accounts": ["665544332211"],
+                        "add": ["112233445566"],
+                        "remove": ["665544332211"],
                     },
                 ],
             },
@@ -408,7 +408,7 @@ class SnapshotSetPermissions(BaseTest):
                 "actions": [
                     {
                         "type": "set-permissions",
-                        "remove_accounts": "matched",
+                        "remove": "matched",
                     },
                 ],
             },
