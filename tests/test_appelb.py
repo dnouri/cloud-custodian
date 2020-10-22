@@ -374,7 +374,7 @@ class AppELBTest(BaseTest):
                 "actions": [
                     {
                         "type": "modify-attributes",
-                        "properties": {
+                        "attributes": {
                             "deletion_protection.enabled": "true",
                         },
                     }

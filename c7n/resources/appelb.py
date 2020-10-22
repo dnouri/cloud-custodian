@@ -501,7 +501,7 @@ class AppELBModifyAttributes(BaseAction):
                 resource: app-elb
                 actions:
                   - type: modify-attributes
-                    properties:
+                    attributes:
                       "deletion_protection.enabled": "true"
                       "idle_timeout.timeout_seconds": 120
     """
@@ -511,7 +511,7 @@ class AppELBModifyAttributes(BaseAction):
         'properties': {
             'type': {
                 'enum': ['modify-attributes']},
-            'properties': {
+            'attributes': {
                 'type': 'object',
                 'items': {
                     'additionalProperties': False,
@@ -538,7 +538,7 @@ class AppELBModifyAttributes(BaseAction):
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('elbv2')
-        attrs = self.data['properties']
+        attrs = self.data['attributes']
         for appelb in resources:
             self.manager.retry(
                 client.modify_load_balancer_attributes,
