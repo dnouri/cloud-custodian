@@ -365,19 +365,27 @@ class AppELBTest(BaseTest):
         self.assertEqual(len(resources), 1)
 
     def test_appelb_modify_attributes(self):
-        session_factory = self.replay_flight_data("test_appelb_modify_attributes")
+        session_factory = self.replay_flight_data(
+            "test_appelb_modify_attributes")
         client = session_factory().client("elbv2")
         p = self.load_policy(
             {
                 "name": "appelb-enable-deletion-protection",
                 "resource": "app-elb",
+                "filters": [
+                    {
+                        "type": "attributes",
+                        "key": "deletion_protection.enabled",
+                        "value": False,
+                    },
+                ],
                 "actions": [
                     {
                         "type": "modify-attributes",
                         "attributes": {
                             "deletion_protection.enabled": "true",
                         },
-                    }
+                    },
                 ],
             },
             session_factory=session_factory,

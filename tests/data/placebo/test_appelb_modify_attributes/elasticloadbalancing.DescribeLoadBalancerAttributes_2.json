@@ -20,7 +20,7 @@
             },
             {
                 "Key": "deletion_protection.enabled",
-                "Value": "false"
+                "Value": "true"
             },
             {
                 "Key": "routing.http2.enabled",

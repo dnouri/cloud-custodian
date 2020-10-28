@@ -487,7 +487,7 @@ class AppELBDeleteAction(BaseAction):
 
 @AppELB.action_registry.register('modify-attributes')
 class AppELBModifyAttributes(BaseAction):
-    """Modify attributes given by string keys and values
+    """Modify attributes given by key/value pairs in `attributes`
 
     Exposes the `ModifyLoadBalancerAttributes API
     <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.modify_load_balancer_attributes>`_
@@ -499,6 +499,10 @@ class AppELBModifyAttributes(BaseAction):
             policies:
               - name: turn-on-elb-deletion-protection
                 resource: app-elb
+                filters:
+                  - type: attributes
+                    key: "deletion_protection.enabled"
+                    value: false
                 actions:
                   - type: modify-attributes
                     attributes:
