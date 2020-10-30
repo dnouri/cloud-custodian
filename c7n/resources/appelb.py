@@ -485,51 +485,6 @@ class AppELBDeleteAction(BaseAction):
                 alb['LoadBalancerArn'], e)
 
 
-@AppELB.filter_registry.register('attributes')
-class AppELBFilterAttributes(ValueFilter):
-    """Value filter on `attributes`
-
-    Exposes the `DescribeLoadBalancerAttributes API
-    <https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_DescribeLoadBalancerAttributes.html>`_
-
-    :example:
-
-    .. code-block:: yaml
-
-            policies:
-              - name: turn-on-elb-deletion-protection
-                resource: app-elb
-                filters:
-                  - type: attributes
-                    key: "deletion_protection.enabled"
-                    value: "false"
-    """
-    schema = type_schema('attributes', rinherit=ValueFilter.schema)
-    permissions = ("elasticloadbalancing:DescribeLoadBalancerAttributes",)
-    annotation_key = 'c7n:LoadBalancerAttributes'
-
-    def process(self, resources, event=None):
-        results = []
-        client = local_session(self.manager.session_factory).client('elbv2')
-
-        for resource in resources:
-            # load the attributes to filter on if they're not there already
-            if self.annotation_key not in resource:
-                describe = client.describe_load_balancer_attributes(
-                    LoadBalancerArn=resource['LoadBalancerArn'])
-                attrs = {
-                    item['Key']: item['Value']
-                    for item in describe['Attributes'].items()
-                }
-                resource[self.annotation_key] = attrs
-
-            # if we have a match on the attributes, let's add it to the result
-            if self.match(resource[self.annotation_key]):
-                results.append(resource)
-
-        return results
-
-
 @AppELB.action_registry.register('modify-attributes')
 class AppELBModifyAttributes(BaseAction):
     """Modify attributes given by key/value pairs in `attributes`
