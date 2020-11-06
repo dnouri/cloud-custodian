@@ -440,6 +440,94 @@ class ServerCertificate(QueryResourceManager):
         global_resource = True
 
 
+@ServerCertificate.action_registry.register('delete')
+class CertificateDelete(BaseAction):
+    """Delete an IAM Certificate
+
+    For example, if you want to automatically delete an unused IAM certificate.
+
+    :example:
+
+      .. code-block:: yaml
+
+        - name: aws-iam-certificate-delete-expired
+          resource: iam-certificate
+          filters:
+            - type: value
+              key: Expiration
+              value_type: expiration
+              op: greater-than
+              value: 0
+          actions:
+            - type: delete
+
+    """
+    schema = type_schema('delete')
+    permissions = ('iam:DeleteServerCertificate',)
+
+    def validate(self):
+        # TODO: Let's argue
+        pass
+
+    def process(self, resources):
+
+        # get reference to AWS client
+        client = local_session(self.manager.session_factory).client('elb')
+
+        # get hold of iam certificatate
+        
+        # for each resource call delete
+
+        for elb in load_balancers:
+            self.manager.retry(
+                client.delete_load_balancer, LoadBalancerName=elb['LoadBalancerName'])
+
+
+        
+        pass
+    
+
+# {
+#     "Path": "/",
+#     "ServerCertificateName": "test-vault",
+#     "ServerCertificateId": "ASCA3IQEXAMPLEWMM3X3",
+#     "Arn": "arn:aws:iam::12345678910:server-certificate/test-vault",
+#     "UploadDate": "2020-010-05T00:31:44+00:00",
+#     "Expiration": "2021-12-02T13:49:10+00:00",
+#     "CustodianDate": "2020-08-27T04:28:07.545042",
+#     "policy": "report-all-iam-certificates",
+#     "region": "us-east-1",
+#     "account": "JamisonSandbox",
+#     "type": "Non-Prod",
+#     "division": "Stacklet"
+# }
+        
+        #TODO: write this
+        # client = local_session(self.manager.session_factory).client('iam')
+        # error = None
+        # if self.data.get('force', False):
+        #     policy_setter = self.manager.action_registry['set-policy'](
+        #         {'state': 'detached', 'arn': '*'}, self.manager)
+        #     policy_setter.process(resources)
+
+        # for r in resources:
+        #     if self.data.get('force', False):
+        #         self.detach_inline_policies(client, r)
+        #     try:
+        #         client.delete_role(RoleName=r['RoleName'])
+        #     except client.exceptions.DeleteConflictException as e:
+        #         self.log.warning(
+        #             "Role:%s cannot be deleted, set force to detach policy and delete"
+        #             % r['Arn'])
+        #         error = e
+        #     except (client.exceptions.NoSuchEntityException,
+        #             client.exceptions.UnmodifiableEntityException):
+        #         continue
+        # if error:
+        #     raise error
+
+
+
 @User.filter_registry.register('usage')
 @Role.filter_registry.register('usage')
 @Group.filter_registry.register('usage')

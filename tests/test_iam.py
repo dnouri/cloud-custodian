@@ -1055,6 +1055,46 @@ def test_iam_group_delete(test, iam_user_group):
         client.get_group(GroupName=resources[0]['GroupName'])
 
 
+@terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
+def test_iam_delete_certificate(test, iam_user_group):
+    session_factory = test.record_flight_data('iam_delete_certificate')
+    client = session_factory().client('iam')
+
+    pdata = {
+        'name': 'group-delete',
+        'resource': 'iam-group',
+        'mode': {
+            'type': 'cloudtrail',
+            'events': [{
+                'source': 'source',
+                'event': 'event',
+                'ids': "GroupNames"}]
+        },
+        'actions': ['delete']
+    }
+    event = {'detail': {
+        'eventName': 'event', 'eventSource': 'source',
+        'GroupNames': [iam_user_group['aws_iam_group.sandbox_devs.name']]}}
+
+    if test.recording:
+        time.sleep(3)
+
+    p = test.load_policy(pdata, session_factory=session_factory)
+    with pytest.raises(ClientError) as ecm:
+        p.push(event)
+    assert ecm.value.response[
+        'Error']['Code'] == 'DeleteConflict'
+
+    pdata['actions'] = [{'type': 'delete', 'force': True}]
+
+    p = test.load_policy(pdata, session_factory=session_factory)
+    resources = p.push(event)
+    assert len(resources) == 1
+
+    with pytest.raises(client.exceptions.NoSuchEntityException):
+        client.get_group(GroupName=resources[0]['GroupName'])
+
+
 class IamGroupTests(BaseTest):
 
     def test_iam_group_used_users(self):
