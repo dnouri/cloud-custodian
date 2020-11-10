@@ -1055,44 +1055,67 @@ def test_iam_group_delete(test, iam_user_group):
         client.get_group(GroupName=resources[0]['GroupName'])
 
 
-@terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
-def test_iam_delete_certificate(test, iam_user_group):
+@terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE, replay=False)
+def test_iam_delete_certificate_action(test, iam_delete_certificate):
     session_factory = test.record_flight_data('iam_delete_certificate')
-    client = session_factory().client('iam')
+    client = session_factory.client('iam')
 
+    try:
+        client.get_server_certificate(
+            ServerCertificateName=alt_test_cert['name'],
+            )
+    except c.exceptions.NoSuchEntityException:
+        pytest.fail("Unexpected MyError ..")
+
+    # our policy
     pdata = {
-        'name': 'group-delete',
-        'resource': 'iam-group',
-        'mode': {
-            'type': 'cloudtrail',
-            'events': [{
-                'source': 'source',
-                'event': 'event',
-                'ids': "GroupNames"}]
-        },
-        'actions': ['delete']
+        'name': 'delete',
+        'resource': 'iam-certificate',
+        'actions': [
+            {
+                'type': 'delete',
+            },
+        ],
     }
-    event = {'detail': {
-        'eventName': 'event', 'eventSource': 'source',
-        'GroupNames': [iam_user_group['aws_iam_group.sandbox_devs.name']]}}
 
-    if test.recording:
-        time.sleep(3)
-
-    p = test.load_policy(pdata, session_factory=session_factory)
-    with pytest.raises(ClientError) as ecm:
-        p.push(event)
-    assert ecm.value.response[
-        'Error']['Code'] == 'DeleteConflict'
-
-    pdata['actions'] = [{'type': 'delete', 'force': True}]
-
-    p = test.load_policy(pdata, session_factory=session_factory)
-    resources = p.push(event)
+    # execute policy
+    policy = test.load_policy(pdata, session_factory=session_factory)
+    resources = policy.run()
     assert len(resources) == 1
+    
+    # use the client to query and make sure that it's gone
+    with pytest.raises(c.exceptions.NoSuchEntityException):
+        client.get_server_certificate(
+            ServerCertificateName=alt_test_cert['name'],
+            )
 
-    with pytest.raises(client.exceptions.NoSuchEntityException):
-        client.get_group(GroupName=resources[0]['GroupName'])
+
+# @terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
+# def test_iam_delete_certificate_example(test, alt_test_cert):
+#
+#     # TODO: see above
+#
+#     # our policy
+#     pdata = {
+#         'name': 'delete',
+#         'resource': 'iam-certificate',
+#         'filters': [
+#             {
+#                 'type': 'value',
+#                 'key': 'Expiration',
+#                 'value_type': 'expiration',
+#                 'op': 'greater-than',
+#                 'value': 0,
+#             },
+#         ],
+#         'actions': [
+#             {
+#                 'type': 'delete',
+#             },
+#         ],
+#     }
+#
+#     # TODO (see above)
 
 
 class IamGroupTests(BaseTest):
