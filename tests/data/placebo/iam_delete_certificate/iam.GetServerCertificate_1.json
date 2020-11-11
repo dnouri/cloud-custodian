@@ -1,0 +1,35 @@
+{
+    "status_code": 200,
+    "data": {
+        "ServerCertificate": {
+            "ServerCertificateMetadata": {
+                "Path": "/",
+                "ServerCertificateName": "alt_test_cert",
+                "ServerCertificateId": "ASCA37RXYDBA6AKFI5VDB",
+                "Arn": "arn:aws:iam::644160558196:server-certificate/alt_test_cert",
+                "UploadDate": {
+                    "__class__": "datetime",
+                    "year": 2020,
+                    "month": 11,
+                    "day": 11,
+                    "hour": 21,
+                    "minute": 32,
+                    "second": 45,
+                    "microsecond": 0
+                },
+                "Expiration": {
+                    "__class__": "datetime",
+                    "year": 2020,
+                    "month": 11,
+                    "day": 12,
+                    "hour": 15,
+                    "minute": 8,
+                    "second": 54,
+                    "microsecond": 0
+                }
+            },
+            "CertificateBody": "-----BEGIN CERTIFICATE-----\nMIIDbzCCAlegAwIBAgIUcw3NyQThmWFTEOb1sA/TJB6ii64wDQYJKoZIhvcNAQEL\nBQAwRzELMAkGA1UEBhMCREUxDzANBgNVBAcMBkJlcmxpbjEVMBMGA1UECgwMVGVz\ndCBDb21wYW55MRAwDgYDVQQDDAdmb28uY29tMB4XDTIwMTExMTE1MDg1NFoXDTIw\nMTExMjE1MDg1NFowRzELMAkGA1UEBhMCREUxDzANBgNVBAcMBkJlcmxpbjEVMBMG\nA1UECgwMVGVzdCBDb21wYW55MRAwDgYDVQQDDAdmb28uY29tMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoeBN2aK8NVEUuToK45zgaenGpeP7IpRl0v2o\nLn6NpEZkpRBCsgG+vvb5FQ6gZT8nDDp+UXt4+J6CXcz015ycPcYFMId5xg3uyZZA\niBPJvhbZoJDAgioxcLVmOj5QA6kWRi+g6SIa+LAbDASGiCStegGZrOZbDx0v0vL2\nzgrx41yMg+nYEMicERQslpJGjj1Z74NMhU/LaeCPhprWmuVvZ294RPK788nJK4/k\nnSRVy7MSdnqLqUNboKi+BISwVyyoXyAy/R0d9dAJrzSQSsXtsCCUmCgW9R066Dv+\nJwuAhPoRfGc6ADHXfdLpuTPilzu0gLrSrCut2jpmXdB0G3vD4wIDAQABo1MwUTAd\nBgNVHQ4EFgQUJlWc3glW1lX5sPkzfo9PyHx0gMYwHwYDVR0jBBgwFoAUJlWc3glW\n1lX5sPkzfo9PyHx0gMYwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOC\nAQEANHj4uGDtuzHkZCsa7Ax32lgDakWDTRpnKR91L5pVSxwHEB7wEle0qyZjgkPd\nXnyay3Sc9U+ZmHkotRv0kZVEqdVNHTlT5p5SeFuXGTkhzep3Avo11FMutsPFimpu\ncdX54TqxMQlKofd8MV7H2tLIAooEN29U/sV5YdsNqxxmHuTNKwe8hamjhy9mCaSF\nRt7rUsMa+aYfug6ASWYYWCID5DKI6dYvi24/C9ItMKuEwT1XcLPIslx1NZ22EfLz\n9I15cn24mUdwfu7oWWinhJDkDtvcdUCT125uXOZq2Pl2hMGhMEiVimZG7L8CZp2N\nU4KJDlF/hGTe2VWJj+W/yvUycQ==\n-----END CERTIFICATE-----"
+        },
+        "ResponseMetadata": {}
+    }
+}

@@ -472,20 +472,14 @@ class CertificateDelete(BaseAction):
     def process(self, resources):
 
         # get reference to AWS client
-        client = local_session(self.manager.session_factory).client('elb')
+        client = local_session(self.manager.session_factory).client('iam')
 
-        # get hold of iam certificatate
-        
         # for each resource call delete
-
-        for elb in load_balancers:
+        for cert in resources:
             self.manager.retry(
-                client.delete_load_balancer, LoadBalancerName=elb['LoadBalancerName'])
-
-
-        
-        pass
-    
+                client.delete_server_certificate,
+                ServerCertificateName=cert['ServerCertificateName'],
+            )
 
 # {
 #     "Path": "/",

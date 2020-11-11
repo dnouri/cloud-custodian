@@ -1055,16 +1055,17 @@ def test_iam_group_delete(test, iam_user_group):
         client.get_group(GroupName=resources[0]['GroupName'])
 
 
-@terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE, replay=False)
+@terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
 def test_iam_delete_certificate_action(test, iam_delete_certificate):
-    session_factory = test.record_flight_data('iam_delete_certificate')
-    client = session_factory.client('iam')
+    iam_name = iam_delete_certificate[
+        'aws_iam_server_certificate.test_cert_alt.name']
+
+    session_factory = test.replay_flight_data('iam_delete_certificate')
+    client = session_factory().client('iam')
 
     try:
-        client.get_server_certificate(
-            ServerCertificateName=alt_test_cert['name'],
-            )
-    except c.exceptions.NoSuchEntityException:
+        client.get_server_certificate(ServerCertificateName=iam_name)
+    except client.exceptions.NoSuchEntityException:
         pytest.fail("Unexpected MyError ..")
 
     # our policy
@@ -1084,10 +1085,8 @@ def test_iam_delete_certificate_action(test, iam_delete_certificate):
     assert len(resources) == 1
     
     # use the client to query and make sure that it's gone
-    with pytest.raises(c.exceptions.NoSuchEntityException):
-        client.get_server_certificate(
-            ServerCertificateName=alt_test_cert['name'],
-            )
+    with pytest.raises(client.exceptions.NoSuchEntityException):
+        client.get_server_certificate(ServerCertificateName=iam_name)
 
 
 # @terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
