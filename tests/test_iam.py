@@ -1055,20 +1055,36 @@ def test_iam_group_delete(test, iam_user_group):
         client.get_group(GroupName=resources[0]['GroupName'])
 
 
+# The terraform fixture sets up resources, which happens before we
+# actually enter the test:
 @terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
 def test_iam_delete_certificate_action(test, iam_delete_certificate):
-    iam_name = iam_delete_certificate[
+    # The 'iam_delete_certificate' argument allows us to access the
+    # data in the 'tf_resources.json' file inside the
+    # 'tests/terraform/iam_delete_certificate' directory.  Here's how
+    # we access the cert's name using a 'dotted' notation:
+    iam_cert_name = iam_delete_certificate[
         'aws_iam_server_certificate.test_cert_alt.name']
 
+    # Uncomment to following line when you're recording the first time:
+    # session_factory = test.record_flight_data('iam_delete_certificate')
+
+    # If you already recorded the interaction with AWS for this test,
+    # you can just replay it.  In which case, the files containing the
+    # responses from AWS are gonna be found inside the
+    # 'tests/data/placebo/iam_delete_certificate' directory:
     session_factory = test.replay_flight_data('iam_delete_certificate')
+
+    # Set up an 'iam' boto client for the test:
     client = session_factory().client('iam')
 
+    # Verify that the terraform fixture was okay:
     try:
-        client.get_server_certificate(ServerCertificateName=iam_name)
+        client.get_server_certificate(ServerCertificateName=iam_cert_name)
     except client.exceptions.NoSuchEntityException:
-        pytest.fail("Unexpected MyError ..")
+        pytest.error("Something went wrong with your terraform fixture")
 
-    # our policy
+    # Execute the 'delete' action that we want to test:
     pdata = {
         'name': 'delete',
         'resource': 'iam-certificate',
@@ -1078,15 +1094,17 @@ def test_iam_delete_certificate_action(test, iam_delete_certificate):
             },
         ],
     }
-
-    # execute policy
     policy = test.load_policy(pdata, session_factory=session_factory)
     resources = policy.run()
+
+    # Here's the number of resources that the policy resolved,
+    # i.e. the resources that passed the filters:
     assert len(resources) == 1
     
-    # use the client to query and make sure that it's gone
+    # We're testing that our delete action worked because the iam
+    # certificate now no longer exists:
     with pytest.raises(client.exceptions.NoSuchEntityException):
-        client.get_server_certificate(ServerCertificateName=iam_name)
+        client.get_server_certificate(ServerCertificateName=iam_cert_name)
 
 
 # @terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
