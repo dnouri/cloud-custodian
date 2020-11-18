@@ -1078,16 +1078,18 @@ def test_iam_delete_certificate_action(test, iam_delete_certificate):
     # Set up an 'iam' boto client for the test:
     client = session_factory().client('iam')
 
-    # Verify that the terraform fixture was okay:
-    try:
-        client.get_server_certificate(ServerCertificateName=iam_cert_name)
-    except client.exceptions.NoSuchEntityException:
-        pytest.error("Something went wrong with your terraform fixture")
-
     # Execute the 'delete' action that we want to test:
     pdata = {
         'name': 'delete',
         'resource': 'iam-certificate',
+        'filters': [
+            {
+                'type': 'value',
+                'key': 'ServerCertificateName',
+                'value': iam_cert_name,
+                'op': 'eq',
+            },
+        ],
         'actions': [
             {
                 'type': 'delete',

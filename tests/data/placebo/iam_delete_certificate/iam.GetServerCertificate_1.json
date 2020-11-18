@@ -1,34 +1,10 @@
 {
-    "status_code": 200,
+    "status_code": 404,
     "data": {
-        "ServerCertificate": {
-            "ServerCertificateMetadata": {
-                "Path": "/",
-                "ServerCertificateName": "alt_test_cert",
-                "ServerCertificateId": "ASCA37RXYDBAQQLEP7IQK",
-                "Arn": "arn:aws:iam::644160558196:server-certificate/alt_test_cert",
-                "UploadDate": {
-                    "__class__": "datetime",
-                    "year": 2020,
-                    "month": 11,
-                    "day": 18,
-                    "hour": 21,
-                    "minute": 28,
-                    "second": 38,
-                    "microsecond": 0
-                },
-                "Expiration": {
-                    "__class__": "datetime",
-                    "year": 2299,
-                    "month": 12,
-                    "day": 31,
-                    "hour": 21,
-                    "minute": 17,
-                    "second": 9,
-                    "microsecond": 0
-                }
-            },
-            "CertificateBody": "-----BEGIN CERTIFICATE-----\nMIIDcTCCAlmgAwIBAgIUdyLoXxEg6f1q3xJTqhCFLFAjSFkwDQYJKoZIhvcNAQEL\nBQAwRzELMAkGA1UEBhMCREUxDzANBgNVBAcMBkJlcmxpbjEVMBMGA1UECgwMVGVz\ndCBDb21wYW55MRAwDgYDVQQDDAdmb28uY29tMCAXDTIwMTExODIxMTcwOVoYDzIy\nOTkxMjMxMjExNzA5WjBHMQswCQYDVQQGEwJERTEPMA0GA1UEBwwGQmVybGluMRUw\nEwYDVQQKDAxUZXN0IENvbXBhbnkxEDAOBgNVBAMMB2Zvby5jb20wggEiMA0GCSqG\nSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDVDdEpgcXd2IflHcOx6lbQXpsNs4NH8LY8\nu0d7g8glWiyErHPz0DgiLEvy74h4pp1w5LAodpCnNflEqCky0QkWhYasc3F0xLbs\nAqNC6FFC/UtBkf6h5b08XxwJ2Iyg0wgWkKO9qEZCbX5iaKizimTs0fffRIN5FQXV\nAduk8/Nc9OYA2At4i3n+vd8tXDBLeeFUH8qA983Qjf2NnW1174cN8IXzY7bE46ax\nMZOpbhm3zvnqCKDrRQ12VblMH9gZZSc8dBs5eXaZ/L/I8bdL++SYX86jOiQoK6Gd\n0smwjbo5mpxDmMG8iBNC6GgSwLcbBXJrsHKb1eOjXPT9n7Odwu/lAgMBAAGjUzBR\nMB0GA1UdDgQWBBQTiVisMqW/SqBHDmADqp2FqqIuxjAfBgNVHSMEGDAWgBQTiVis\nMqW/SqBHDmADqp2FqqIuxjAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUA\nA4IBAQB3bCghuy0a8BI+sObx3DhXDOeBpE4IZxOkJALu8/Z3Pnq7N6uC+LElzcu2\nNi4YU71w60gNQM8lFemIZlFeWnMPQYFx5OS+vxo2xiIXYxQhyOm1F4RnWyol3oYW\nqxyfrnwkOIfQ5kAg6EyxcV2Fyt2qzioafprpGUO5OPFcgspMrTnxSMWyz7ppXZ13\nO2r8eXjgVSggNk8P78j4JnrgJhJAm6879eA32Y2q994wmT9KUNhUbQrFgNPib8W2\nq1Fe/c7vH6Khp47X/tsmFGZpEVFhuRSi+YwApYO/s53TVu145N+WS/rBUxDsvUyD\nHGTJ6VP83qwWSWmnAIxfVpD67pO3\n-----END CERTIFICATE-----"
+        "Error": {
+            "Type": "Sender",
+            "Code": "NoSuchEntity",
+            "Message": "The Server Certificate with name alt_test_cert cannot be found."
         },
         "ResponseMetadata": {}
     }
