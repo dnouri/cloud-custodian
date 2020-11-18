@@ -479,6 +479,10 @@ class CertificateDelete(BaseAction):
             self.manager.retry(
                 client.delete_server_certificate,
                 ServerCertificateName=cert['ServerCertificateName'],
+                ignore_err_codes=(
+                    'NoSuchEntityException',
+                    'DeleteConflictException',
+                ),
             )
 
 # {
