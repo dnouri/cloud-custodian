@@ -5,26 +5,26 @@
             {
                 "Path": "/",
                 "ServerCertificateName": "alt_test_cert",
-                "ServerCertificateId": "ASCA37RXYDBA6AKFI5VDB",
+                "ServerCertificateId": "ASCA37RXYDBAQQLEP7IQK",
                 "Arn": "arn:aws:iam::644160558196:server-certificate/alt_test_cert",
                 "UploadDate": {
                     "__class__": "datetime",
                     "year": 2020,
                     "month": 11,
-                    "day": 11,
+                    "day": 18,
                     "hour": 21,
-                    "minute": 32,
-                    "second": 45,
+                    "minute": 28,
+                    "second": 38,
                     "microsecond": 0
                 },
                 "Expiration": {
                     "__class__": "datetime",
-                    "year": 2020,
-                    "month": 11,
-                    "day": 12,
-                    "hour": 15,
-                    "minute": 8,
-                    "second": 54,
+                    "year": 2299,
+                    "month": 12,
+                    "day": 31,
+                    "hour": 21,
+                    "minute": 17,
+                    "second": 9,
                     "microsecond": 0
                 }
             }
