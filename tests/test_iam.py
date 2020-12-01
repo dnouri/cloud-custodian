@@ -1102,39 +1102,12 @@ def test_iam_delete_certificate_action(test, iam_delete_certificate):
     # Here's the number of resources that the policy resolved,
     # i.e. the resources that passed the filters:
     assert len(resources) == 1
-    
+    assert resources[0]['Arn'] == 'arn:aws:iam::644160558196:server-certificate/alt_test_cert'
+
     # We're testing that our delete action worked because the iam
     # certificate now no longer exists:
     with pytest.raises(client.exceptions.NoSuchEntityException):
         client.get_server_certificate(ServerCertificateName=iam_cert_name)
-
-
-# @terraform('iam_delete_certificate', teardown=terraform.TEARDOWN_IGNORE)
-# def test_iam_delete_certificate_example(test, alt_test_cert):
-#
-#     # TODO: see above
-#
-#     # our policy
-#     pdata = {
-#         'name': 'delete',
-#         'resource': 'iam-certificate',
-#         'filters': [
-#             {
-#                 'type': 'value',
-#                 'key': 'Expiration',
-#                 'value_type': 'expiration',
-#                 'op': 'greater-than',
-#                 'value': 0,
-#             },
-#         ],
-#         'actions': [
-#             {
-#                 'type': 'delete',
-#             },
-#         ],
-#     }
-#
-#     # TODO (see above)
 
 
 class IamGroupTests(BaseTest):
