@@ -5,7 +5,14 @@
 from .common import BaseTest, event_data
 from c7n.exceptions import PolicyValidationError
 from c7n.executor import MainThreadExecutor
-from c7n.resources.appelb import AppELB, AppELBTargetGroup
+from c7n.resources.appelb import AppELB, AppELBTargetGroup, serialize_attribute_value
+
+
+def test_serialize():
+    assert serialize_attribute_value(True) == 'true'
+    assert serialize_attribute_value(False) == 'false'
+    assert serialize_attribute_value(60) == '60'
+    assert serialize_attribute_value('abc') == 'abc'
 
 
 class AppELBTest(BaseTest):

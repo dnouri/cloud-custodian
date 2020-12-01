@@ -487,10 +487,7 @@ class AppELBDeleteAction(BaseAction):
 
 @AppELB.action_registry.register('modify-attributes')
 class AppELBModifyAttributes(BaseAction):
-    """Modify attributes given by key/value pairs in `attributes`
-
-    Exposes the `ModifyLoadBalancerAttributes API
-    <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.modify_load_balancer_attributes>`_
+    """Modify load balancer attributes.
 
     :example:
 
@@ -517,23 +514,23 @@ class AppELBModifyAttributes(BaseAction):
                 'enum': ['modify-attributes']},
             'attributes': {
                 'type': 'object',
-                'items': {
-                    'additionalProperties': False,
+                'additionalProperties': False,
+                'properties': {
                     'access_logs.s3.enabled': {
-                        'enum': ['true', 'false']},
+                        'enum': ['true', 'false', True, False]},
                     'access_logs.s3.bucket': {'type': 'string'},
                     'access_logs.s3.prefix': {'type': 'string'},
                     'deletion_protection.enabled': {
-                        'enum': ['true', 'false']},
+                        'enum': ['true', 'false', True, False]},
                     'idle_timeout.timeout_seconds': {'type': 'number'},
                     'routing.http.desync_mitigation_mode': {
                         'enum': ['monitor', 'defensive', 'strictest']},
                     'routing.http.drop_invalid_header_fields.enabled': {
-                        'enum': ['true', 'false']},
+                        'enum': ['true', 'false', True, False]},
                     'routing.http2.enabled': {
-                        'enum': ['true', 'false']},
+                        'enum': ['true', 'false', True, False]},
                     'load_balancing.cross_zone.enabled': {
-                        'enum': ['true', 'false']},
+                        'enum': ['true', 'false', True, False]},
                 },
             },
         },
@@ -542,14 +539,13 @@ class AppELBModifyAttributes(BaseAction):
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('elbv2')
-        attrs = self.data['attributes']
         for appelb in resources:
             self.manager.retry(
                 client.modify_load_balancer_attributes,
                 LoadBalancerArn=appelb['LoadBalancerArn'],
                 Attributes=[
-                    {'Key': key, 'Value': value}
-                    for (key, value) in attrs.items()
+                    {'Key': key, 'Value': serialize_attribute_value(value)}
+                    for (key, value) in self.data['attributes'].items()
                 ],
                 ignore_err_codes=('LoadBalancerNotFoundException',),
             )
@@ -580,6 +576,16 @@ def parse_attribute_value(v):
         v = True
     elif v == 'false':
         v = False
+    return v
+
+
+def serialize_attribute_value(v):
+    if v is True:
+        return 'true'
+    elif v is False:
+        return 'false'
+    elif isinstance(v, int):
+        return str(v)
     return v
 
 
