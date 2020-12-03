@@ -347,14 +347,17 @@ class SnapshotSetPermissions(BaseTest):
             {
                 "name": "reset-permissions",
                 "resource": "ebs-snapshot",
+                "filters": ["cross-account"],
                 "actions": ["set-permissions"],
             },
             session_factory=factory,
         )
         p.validate()
         resources = p.run()
-
         self.assertEqual(len(resources), 1)
+        assert sorted(
+            resources[0]['c7n:CrossAccountViolations']) == sorted(
+                ['112233445566', '665544332211'])
         client = factory().client('ec2')
         perms = client.describe_snapshot_attribute(
             SnapshotId=resources[0]['SnapshotId'],
@@ -370,6 +373,7 @@ class SnapshotSetPermissions(BaseTest):
             {
                 "name": "set-permissions",
                 "resource": "ebs-snapshot",
+                "filters": ["cross-account"],
                 "actions": [
                     {
                         "type": "set-permissions",

@@ -582,12 +582,12 @@ class SetPermissions(BaseAction):
         if remove_accounts == 'matched':
             remove_accounts = snapshot.get(
                 'c7n:' + SnapshotCrossAccountAccess.annotation_key)
+
         remove = []
+        remove.extend([{'UserId': a} for a in remove_accounts if a != 'all'])
         if 'all' in remove_accounts:
             remove.append({'Group': 'all'})
             remove_accounts.remove('all')
-        else:
-            remove.extend([{'UserId': a} for a in remove_accounts])
 
         add = [{'UserId': a} for a in add_accounts]
 
